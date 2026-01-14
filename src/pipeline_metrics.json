@@ -1,0 +1,839 @@
+[
+  {
+    "timestamp": 1768302468.8088493,
+    "iso_date": "2026-01-13T12:07:48.808849",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1768304679.51772,
+    "iso_date": "2026-01-13T12:44:39.517720",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1768304723.4874501,
+    "iso_date": "2026-01-13T12:45:23.487450",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1768305079.837437,
+    "iso_date": "2026-01-13T12:51:19.837437",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1768305085.8496559,
+    "iso_date": "2026-01-13T12:51:25.849655",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Hole Dateiliste von data-samples/states/"
+  },
+  {
+    "timestamp": 1768305086.8962348,
+    "iso_date": "2026-01-13T12:51:26.896234",
+    "stage": "Listing",
+    "metric": "FileCount",
+    "value": 1,
+    "unit": "Count",
+    "remarks": "Zu verarbeitende Dateien (Sim-Faktor 1)"
+  },
+  {
+    "timestamp": 1768305087.2527297,
+    "iso_date": "2026-01-13T12:51:27.252729",
+    "stage": "Partitioning",
+    "metric": "NumPartitions",
+    "value": 2,
+    "unit": "Count",
+    "remarks": "Anzahl Spark Partitionen"
+  },
+  {
+    "timestamp": 1768305242.9663193,
+    "iso_date": "2026-01-13T12:54:02.966319",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1768305463.3978908,
+    "iso_date": "2026-01-13T12:57:43.397890",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1768306093.1842723,
+    "iso_date": "2026-01-13T13:08:13.184272",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1768306098.2488563,
+    "iso_date": "2026-01-13T13:08:18.248856",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Hole Dateiliste von data-samples/states/"
+  },
+  {
+    "timestamp": 1768306099.0958076,
+    "iso_date": "2026-01-13T13:08:19.095807",
+    "stage": "Listing",
+    "metric": "FileCount",
+    "value": 1,
+    "unit": "Count",
+    "remarks": "Zu verarbeitende Dateien (Sim-Faktor 1)"
+  },
+  {
+    "timestamp": 1768306099.434538,
+    "iso_date": "2026-01-13T13:08:19.434538",
+    "stage": "Partitioning",
+    "metric": "NumPartitions",
+    "value": 2,
+    "unit": "Count",
+    "remarks": "Anzahl Spark Partitionen"
+  },
+  {
+    "timestamp": 1768306110.522172,
+    "iso_date": "2026-01-13T13:08:30.522172",
+    "stage": "Processing",
+    "metric": "Duration",
+    "value": 11.08663535118103,
+    "unit": "Seconds",
+    "remarks": "Gesamtzeit Ingestion (Faktor 1)"
+  },
+  {
+    "timestamp": 1768306110.5231721,
+    "iso_date": "2026-01-13T13:08:30.523172",
+    "stage": "Processing",
+    "metric": "RowCount",
+    "value": 0,
+    "unit": "Rows",
+    "remarks": "Importierte Zeilen"
+  },
+  {
+    "timestamp": 1768306110.5251718,
+    "iso_date": "2026-01-13T13:08:30.525171",
+    "stage": "Throughput",
+    "metric": "RowsPerSecond",
+    "value": 0.0,
+    "unit": "R/s",
+    "remarks": "Durchsatz"
+  },
+  {
+    "timestamp": 1768306110.526678,
+    "iso_date": "2026-01-13T13:08:30.526677",
+    "stage": "Storage",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Schreibe Parquet"
+  },
+  {
+    "timestamp": 1768306856.1460295,
+    "iso_date": "2026-01-13T13:20:56.146029",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1768306861.0911448,
+    "iso_date": "2026-01-13T13:21:01.091144",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Hole Dateiliste von data-samples/states/"
+  },
+  {
+    "timestamp": 1768306861.91234,
+    "iso_date": "2026-01-13T13:21:01.912340",
+    "stage": "Listing",
+    "metric": "FileCount",
+    "value": 1,
+    "unit": "Count",
+    "remarks": "Zu verarbeitende Dateien (Sim-Faktor 1)"
+  },
+  {
+    "timestamp": 1768306862.2227619,
+    "iso_date": "2026-01-13T13:21:02.222761",
+    "stage": "Partitioning",
+    "metric": "NumPartitions",
+    "value": 2,
+    "unit": "Count",
+    "remarks": "Anzahl Spark Partitionen"
+  },
+  {
+    "timestamp": 1768306870.4512496,
+    "iso_date": "2026-01-13T13:21:10.451249",
+    "stage": "Processing",
+    "metric": "Duration",
+    "value": 8.227477788925171,
+    "unit": "Seconds",
+    "remarks": "Gesamtzeit Ingestion (Faktor 1)"
+  },
+  {
+    "timestamp": 1768306870.4532762,
+    "iso_date": "2026-01-13T13:21:10.453276",
+    "stage": "Processing",
+    "metric": "RowCount",
+    "value": 0,
+    "unit": "Rows",
+    "remarks": "Importierte Zeilen"
+  },
+  {
+    "timestamp": 1768306870.454278,
+    "iso_date": "2026-01-13T13:21:10.454277",
+    "stage": "Throughput",
+    "metric": "RowsPerSecond",
+    "value": 0.0,
+    "unit": "R/s",
+    "remarks": "Durchsatz"
+  },
+  {
+    "timestamp": 1768306870.4552758,
+    "iso_date": "2026-01-13T13:21:10.455275",
+    "stage": "Storage",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Schreibe Parquet"
+  },
+  {
+    "timestamp": 1768306874.8985577,
+    "iso_date": "2026-01-13T13:21:14.898557",
+    "stage": "Storage",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Gespeichert: data\\processed\\run_1768306870"
+  },
+  {
+    "timestamp": 1768307774.8790395,
+    "iso_date": "2026-01-13T13:36:14.879039",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1768307779.6501276,
+    "iso_date": "2026-01-13T13:36:19.650127",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Hole Dateiliste von data-samples/states/"
+  },
+  {
+    "timestamp": 1768307780.4743629,
+    "iso_date": "2026-01-13T13:36:20.474362",
+    "stage": "Listing",
+    "metric": "FileCount",
+    "value": 1,
+    "unit": "Count",
+    "remarks": "Zu verarbeitende Dateien (Sim-Faktor 1)"
+  },
+  {
+    "timestamp": 1768307780.7588546,
+    "iso_date": "2026-01-13T13:36:20.758854",
+    "stage": "Partitioning",
+    "metric": "NumPartitions",
+    "value": 2,
+    "unit": "Count",
+    "remarks": "Anzahl Spark Partitionen"
+  },
+  {
+    "timestamp": 1768307789.8260803,
+    "iso_date": "2026-01-13T13:36:29.826080",
+    "stage": "Processing",
+    "metric": "Duration",
+    "value": 9.06524109840393,
+    "unit": "Seconds",
+    "remarks": "Gesamtzeit Ingestion (Faktor 1)"
+  },
+  {
+    "timestamp": 1768307789.8280814,
+    "iso_date": "2026-01-13T13:36:29.828081",
+    "stage": "Processing",
+    "metric": "RowCount",
+    "value": 0,
+    "unit": "Rows",
+    "remarks": "Importierte Zeilen"
+  },
+  {
+    "timestamp": 1768307789.8300812,
+    "iso_date": "2026-01-13T13:36:29.830081",
+    "stage": "Throughput",
+    "metric": "RowsPerSecond",
+    "value": 0.0,
+    "unit": "R/s",
+    "remarks": "Durchsatz"
+  },
+  {
+    "timestamp": 1768307789.8310795,
+    "iso_date": "2026-01-13T13:36:29.831079",
+    "stage": "Storage",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Schreibe Parquet"
+  },
+  {
+    "timestamp": 1768307794.1136544,
+    "iso_date": "2026-01-13T13:36:34.113654",
+    "stage": "Storage",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Gespeichert: data\\processed\\run_1768307789"
+  },
+  {
+    "timestamp": 1768307930.0031269,
+    "iso_date": "2026-01-13T13:38:50.003126",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1768307933.8766456,
+    "iso_date": "2026-01-13T13:38:53.876645",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Hole Dateiliste von data-samples/states/"
+  },
+  {
+    "timestamp": 1768307934.5789213,
+    "iso_date": "2026-01-13T13:38:54.578921",
+    "stage": "Listing",
+    "metric": "FileCount",
+    "value": 1,
+    "unit": "Count",
+    "remarks": "Dateien: ['states/.2017-06-05/00/states_.2017-06-05-00.csv.tar']"
+  },
+  {
+    "timestamp": 1768307995.627729,
+    "iso_date": "2026-01-13T13:39:55.627729",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1768307999.5833654,
+    "iso_date": "2026-01-13T13:39:59.583365",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Hole Dateiliste von data-samples/states/"
+  },
+  {
+    "timestamp": 1768308000.2936769,
+    "iso_date": "2026-01-13T13:40:00.293676",
+    "stage": "Listing",
+    "metric": "FileCount",
+    "value": 1,
+    "unit": "Count",
+    "remarks": "Dateien: ['states/.2017-06-05/00/states_.2017-06-05-00.csv.tar']"
+  },
+  {
+    "timestamp": 1768308009.9760208,
+    "iso_date": "2026-01-13T13:40:09.976020",
+    "stage": "Processing",
+    "metric": "Duration",
+    "value": 9.44068431854248,
+    "unit": "Seconds",
+    "remarks": "Zeit"
+  },
+  {
+    "timestamp": 1768308009.9780219,
+    "iso_date": "2026-01-13T13:40:09.978022",
+    "stage": "Processing",
+    "metric": "RowCount",
+    "value": 0,
+    "unit": "Rows",
+    "remarks": "Zeilen"
+  },
+  {
+    "timestamp": 1768308118.8887146,
+    "iso_date": "2026-01-13T13:41:58.888714",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1768308125.1452124,
+    "iso_date": "2026-01-13T13:42:05.145212",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Hole Dateiliste von data-samples/states/"
+  },
+  {
+    "timestamp": 1768308126.0132396,
+    "iso_date": "2026-01-13T13:42:06.013239",
+    "stage": "Listing",
+    "metric": "FileCount",
+    "value": 1,
+    "unit": "Count",
+    "remarks": "Dateien: ['states/.2017-06-05/00/states_.2017-06-05-00.csv.tar']"
+  },
+  {
+    "timestamp": 1768308136.0430262,
+    "iso_date": "2026-01-13T13:42:16.043026",
+    "stage": "Processing",
+    "metric": "Duration",
+    "value": 9.787769794464111,
+    "unit": "Seconds",
+    "remarks": "Zeit"
+  },
+  {
+    "timestamp": 1768308136.0450327,
+    "iso_date": "2026-01-13T13:42:16.045032",
+    "stage": "Processing",
+    "metric": "RowCount",
+    "value": 0,
+    "unit": "Rows",
+    "remarks": "Zeilen"
+  },
+  {
+    "timestamp": 1768309029.0111568,
+    "iso_date": "2026-01-13T13:57:09.011156",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1768309035.0714598,
+    "iso_date": "2026-01-13T13:57:15.071459",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Hole Dateiliste von data-samples/states/"
+  },
+  {
+    "timestamp": 1768309035.9157133,
+    "iso_date": "2026-01-13T13:57:15.915713",
+    "stage": "Listing",
+    "metric": "FileCount",
+    "value": 1,
+    "unit": "Count",
+    "remarks": "Dateien: ['states/.2017-06-05/00/states_.2017-06-05-00.csv.tar']"
+  },
+  {
+    "timestamp": 1768309046.1770654,
+    "iso_date": "2026-01-13T13:57:26.177065",
+    "stage": "Processing",
+    "metric": "Duration",
+    "value": 10.017682075500488,
+    "unit": "Seconds",
+    "remarks": "Zeit"
+  },
+  {
+    "timestamp": 1768309046.1790671,
+    "iso_date": "2026-01-13T13:57:26.179067",
+    "stage": "Processing",
+    "metric": "RowCount",
+    "value": 0,
+    "unit": "Rows",
+    "remarks": "Zeilen"
+  },
+  {
+    "timestamp": 1768309145.5434074,
+    "iso_date": "2026-01-13T13:59:05.543407",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1768309151.4822567,
+    "iso_date": "2026-01-13T13:59:11.482256",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Hole Dateiliste von data-samples/states/2022-06-27/00/"
+  },
+  {
+    "timestamp": 1768309152.0111625,
+    "iso_date": "2026-01-13T13:59:12.011162",
+    "stage": "Listing",
+    "metric": "FileCount",
+    "value": 1,
+    "unit": "Count",
+    "remarks": "Dateien: ['states/2022-06-27/00/states_2022-06-27-00.csv.tar']"
+  },
+  {
+    "timestamp": 1768310243.6121075,
+    "iso_date": "2026-01-13T14:17:23.612107",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1768310249.7851517,
+    "iso_date": "2026-01-13T14:17:29.785151",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Hole Dateiliste von data-samples/states/2022-06-27/00/"
+  },
+  {
+    "timestamp": 1768310250.2742178,
+    "iso_date": "2026-01-13T14:17:30.274217",
+    "stage": "Listing",
+    "metric": "FileCount",
+    "value": 1,
+    "unit": "Count",
+    "remarks": "Dateien: ['states/2022-06-27/00/states_2022-06-27-00.csv.tar']"
+  },
+  {
+    "timestamp": 1768324514.7401924,
+    "iso_date": "2026-01-13T18:15:14.740192",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1768324520.0884764,
+    "iso_date": "2026-01-13T18:15:20.088476",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Hole Dateiliste von data-samples/states/2022-06-27/00/"
+  },
+  {
+    "timestamp": 1768324520.4698563,
+    "iso_date": "2026-01-13T18:15:20.469856",
+    "stage": "Listing",
+    "metric": "FileCount",
+    "value": 1,
+    "unit": "Count",
+    "remarks": "Dateien: ['states/2022-06-27/00/states_2022-06-27-00.avro.tar']"
+  },
+  {
+    "timestamp": 1768324618.088805,
+    "iso_date": "2026-01-13T18:16:58.088804",
+    "stage": "Processing",
+    "metric": "Duration",
+    "value": 97.43654584884644,
+    "unit": "Seconds",
+    "remarks": "Zeit"
+  },
+  {
+    "timestamp": 1768324618.0918028,
+    "iso_date": "2026-01-13T18:16:58.091803",
+    "stage": "Processing",
+    "metric": "RowCount",
+    "value": 12,
+    "unit": "Rows",
+    "remarks": "Zeilen"
+  },
+  {
+    "timestamp": 1768324668.369646,
+    "iso_date": "2026-01-13T18:17:48.369646",
+    "stage": "Storage",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Gespeichert: data\\processed\\run_1768324618"
+  },
+  {
+    "timestamp": 1768325084.335751,
+    "iso_date": "2026-01-13T18:24:44.335751",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1768325090.264826,
+    "iso_date": "2026-01-13T18:24:50.264826",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Hole Dateiliste von data-samples/states/2020-06-01/00/"
+  },
+  {
+    "timestamp": 1768325090.7295377,
+    "iso_date": "2026-01-13T18:24:50.729537",
+    "stage": "Listing",
+    "metric": "FileCount",
+    "value": 1,
+    "unit": "Count",
+    "remarks": "Dateien: ['states/2020-06-01/00/states_2020-06-01-00.avro.tar']"
+  },
+  {
+    "timestamp": 1768325137.8153872,
+    "iso_date": "2026-01-13T18:25:37.815387",
+    "stage": "Processing",
+    "metric": "Duration",
+    "value": 46.83972716331482,
+    "unit": "Seconds",
+    "remarks": "Zeit"
+  },
+  {
+    "timestamp": 1768325137.8173869,
+    "iso_date": "2026-01-13T18:25:37.817386",
+    "stage": "Processing",
+    "metric": "RowCount",
+    "value": 5,
+    "unit": "Rows",
+    "remarks": "Zeilen"
+  },
+  {
+    "timestamp": 1768325161.0562277,
+    "iso_date": "2026-01-13T18:26:01.056227",
+    "stage": "Storage",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Gespeichert: data\\processed\\run_1768325137"
+  },
+  {
+    "timestamp": 1768325327.3427515,
+    "iso_date": "2026-01-13T18:28:47.342751",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1768325333.659312,
+    "iso_date": "2026-01-13T18:28:53.659312",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Hole Dateiliste von data-samples/states/2017-06-05/00/"
+  },
+  {
+    "timestamp": 1768325806.7195916,
+    "iso_date": "2026-01-13T18:36:46.719591",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1768325812.7247233,
+    "iso_date": "2026-01-13T18:36:52.724723",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Hole Dateiliste von data-samples/states/2017-06-05/00/"
+  },
+  {
+    "timestamp": 1768325840.052431,
+    "iso_date": "2026-01-13T18:37:20.052431",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1768325846.4781666,
+    "iso_date": "2026-01-13T18:37:26.478166",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Hole Dateiliste von data-samples/states/2022-06-27/00/"
+  },
+  {
+    "timestamp": 1768325846.976084,
+    "iso_date": "2026-01-13T18:37:26.976083",
+    "stage": "Listing",
+    "metric": "FileCount",
+    "value": 1,
+    "unit": "Count",
+    "remarks": "Dateien: ['states/2022-06-27/00/states_2022-06-27-00.avro.tar']"
+  },
+  {
+    "timestamp": 1768326019.7466526,
+    "iso_date": "2026-01-13T18:40:19.746652",
+    "stage": "Processing",
+    "metric": "Duration",
+    "value": 172.4809970855713,
+    "unit": "Seconds",
+    "remarks": "Zeit"
+  },
+  {
+    "timestamp": 1768326019.7496495,
+    "iso_date": "2026-01-13T18:40:19.749649",
+    "stage": "Processing",
+    "metric": "RowCount",
+    "value": 2277578,
+    "unit": "Rows",
+    "remarks": "Zeilen"
+  },
+  {
+    "timestamp": 1768326115.4481933,
+    "iso_date": "2026-01-13T18:41:55.448193",
+    "stage": "Storage",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Gespeichert: data\\processed\\run_1768326019"
+  },
+  {
+    "timestamp": 1768326180.3099363,
+    "iso_date": "2026-01-13T18:43:00.309936",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1768326187.4668922,
+    "iso_date": "2026-01-13T18:43:07.466892",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Hole Dateiliste von data-samples/states/"
+  },
+  {
+    "timestamp": 1768326188.257439,
+    "iso_date": "2026-01-13T18:43:08.257438",
+    "stage": "Listing",
+    "metric": "FileCount",
+    "value": 1,
+    "unit": "Count",
+    "remarks": "Dateien: ['states/.2017-06-05/00/states_.2017-06-05-00.avro.tar']"
+  },
+  {
+    "timestamp": 1768326542.087467,
+    "iso_date": "2026-01-13T18:49:02.087466",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1768326548.0118144,
+    "iso_date": "2026-01-13T18:49:08.011814",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Suche erste valide Datei in data-samples/states/..."
+  },
+  {
+    "timestamp": 1768326552.670112,
+    "iso_date": "2026-01-13T18:49:12.670112",
+    "stage": "Listing",
+    "metric": "FileCount",
+    "value": 1,
+    "unit": "Count",
+    "remarks": "Dateien: ['states/2020-05-25/00/states_2020-05-25-00.avro.tar']"
+  },
+  {
+    "timestamp": 1768326592.4226317,
+    "iso_date": "2026-01-13T18:49:52.422631",
+    "stage": "Processing",
+    "metric": "Duration",
+    "value": 39.50440526008606,
+    "unit": "Seconds",
+    "remarks": "Zeit"
+  },
+  {
+    "timestamp": 1768326592.4261527,
+    "iso_date": "2026-01-13T18:49:52.426152",
+    "stage": "Processing",
+    "metric": "RowCount",
+    "value": 723098,
+    "unit": "Rows",
+    "remarks": "Zeilen"
+  },
+  {
+    "timestamp": 1768326599.542175,
+    "iso_date": "2026-01-13T18:49:59.542174",
+    "stage": "Storage",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Gespeichert: data\\processed\\run_1768326592"
+  },
+  {
+    "timestamp": 1768386317.065305,
+    "iso_date": "2026-01-14T11:25:17.065305",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1768386325.2285783,
+    "iso_date": "2026-01-14T11:25:25.228578",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Suche erste valide Datei in data-samples/states/..."
+  },
+  {
+    "timestamp": 1768386330.3291223,
+    "iso_date": "2026-01-14T11:25:30.329122",
+    "stage": "Listing",
+    "metric": "FileCount",
+    "value": 1,
+    "unit": "Count",
+    "remarks": "Dateien: ['states/2020-05-25/00/states_2020-05-25-00.avro.tar']"
+  }
+]

@@ -1,0 +1,18 @@
+# Sicherheit (Niemals hochladen!)
+.env
+.DS_Store
+
+# Riesige Datenmengen
+data/
+*.tar
+*.csv
+*.parquet
+*.avro
+
+# Python & Umgebung
+.venv1/
+__pycache__/
+*.pyc
+
+# IntelliJ/Editor Dateien
+.idea/
