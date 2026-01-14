@@ -1,3 +1,4 @@
+import subprocess  # <--- Wichtig für den Monitor-Start
 import os
 import boto3
 import tarfile
@@ -10,6 +11,11 @@ from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType
 from dotenv import load_dotenv
 
+# --- EIGENE IMPORTS ---
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from src.custom_logger import PipelineLogger
+# HIER WURDE DIE ZEILE ENTFERNT: from src.system_monitor import SystemMonitor (Brauchen wir nicht mehr)
+
 # --- WINDOWS SETUP ---
 os.environ['PYSPARK_PYTHON'] = sys.executable
 os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
@@ -21,9 +27,6 @@ if 'SPARK_HOME' in os.environ:
     del os.environ['SPARK_HOME']
 # ---------------------
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from src.custom_logger import PipelineLogger
-
 load_dotenv()
 BUCKET_NAME = os.getenv("BUCKET_NAME", "data-samples")
 PREFIX = os.getenv("PREFIX", "states/")
@@ -31,7 +34,8 @@ ENDPOINT_URL = os.getenv("S3_ENDPOINT", "https://s3.opensky-network.org")
 LOG_FILE = os.getenv("LOG_FILE", "pipeline_metrics.json")
 SCALE_FACTOR = int(os.getenv("SCALE_FACTOR", "1"))
 
-logger = PipelineLogger(LOG_FILE)
+# Datei für Kommunikation zwischen Spark und Monitor
+STAGE_FILE = os.path.join("data", "current_stage.txt")
 
 COLUMNS_ORDER = [
     "time", "icao24", "lat", "lon", "velocity", "heading", "vertrate",
@@ -44,39 +48,52 @@ def get_s3_client():
     s3.meta.events.register('choose-signer.s3.*', disable_signing)
     return s3
 
+def set_monitor_stage(stage_name):
+    """Schreibt den aktuellen Status in eine Datei, die der Monitor liest."""
+    try:
+        # Ordner erstellen falls nicht da
+        os.makedirs(os.path.dirname(STAGE_FILE), exist_ok=True)
+        with open(STAGE_FILE, 'w') as f:
+            f.write(stage_name)
+    except:
+        pass
+
 def process_partition(iterator):
     """
-    Worker mit ECHTEM STREAMING (Input UND Output)
-    Nutzt 'yield' statt Listen, um RAM-Überlauf zu verhindern.
+    Worker mit ECHTEM STREAMING und SMART SCHEMA MAPPING
     """
     import sys
     import fastavro
 
     urls = list(iterator)
-    # Wenn keine URLs da sind, brechen wir sofort ab (Leerer Iterator)
     if not urls:
         return iter([])
 
     s3 = get_s3_client()
-
-    # Statistik für Logs
     row_counter = 0
+
+    # MAPPING: Unser Ziel-Name -> Mögliche Avro-Namen
+    AVRO_MAPPING = {
+        "lat": ["latitude", "lat"],
+        "lon": ["longitude", "lon"],
+        "velocity": ["velocity", "speed"],
+        "heading": ["heading", "track"],
+        "vertrate": ["vertical_rate", "vertrate"],
+        "geoaltitude": ["geo_altitude", "altitude", "geoaltitude"]
+    }
 
     print(f"DEBUG [Worker]: Starte Verarbeitung von {len(urls)} Paketen...", file=sys.stderr)
 
     for key in urls:
-        print(f"DEBUG [Worker]: Starte Stream für: {key}", file=sys.stderr)
         try:
-            # 1. Verbindung öffnen
             obj = s3.get_object(Bucket=BUCKET_NAME, Key=key)
             raw_stream = obj['Body']
 
-            # 2. Tar im Stream-Modus öffnen
             try:
                 with tarfile.open(fileobj=raw_stream, mode='r|') as tar:
                     for member in tar:
 
-                        # --- STRATEGIE 1: AVRO ---
+                        # --- AVRO STRATEGIE (Verbessert) ---
                         if member.name.endswith(".avro"):
                             f = tar.extractfile(member)
                             if f:
@@ -84,150 +101,170 @@ def process_partition(iterator):
                                 for record in reader:
                                     row = []
                                     for col in COLUMNS_ORDER:
+                                        # 1. Direkter Versuch
                                         val = record.get(col)
-                                        row.append("" if val is None else str(val))
 
-                                    # HIER IST DER FIX:
-                                    # Wir geben die Zeile SOFORT an Spark weiter.
-                                    # Kein Speichern in einer Liste!
+                                        # 2. Fallback Versuch (Synonyme prüfen)
+                                        if val is None and col in AVRO_MAPPING:
+                                            for alias in AVRO_MAPPING[col]:
+                                                val = record.get(alias)
+                                                if val is not None:
+                                                    break
+
+                                        row.append("" if val is None else str(val))
                                     yield row
                                     row_counter += 1
 
-                        # --- STRATEGIE 2: CSV ---
+                        # --- CSV STRATEGIE (Bleibt gleich) ---
                         elif ".csv" in member.name.lower() or "states" in member.name.lower():
                             if member.name.endswith(".avro"): continue
-
                             f = tar.extractfile(member)
                             if f:
                                 for line_bytes in f:
                                     line = line_bytes.decode('utf-8', errors='ignore').strip()
                                     if not line: continue
-
-                                    if "time" in line and "icao24" in line:
-                                        continue
-
+                                    if "time" in line and "icao24" in line: continue
                                     parts = line.split(",")
-                                    yield parts # <--- FIX: Sofort weitergeben
+                                    yield parts
                                     row_counter += 1
 
             except Exception as tar_error:
                 print(f"DEBUG [Worker]: Stream-Fehler bei {key}: {tar_error}", file=sys.stderr)
-
         except Exception as e:
             print(f"ERROR bei {key}: {str(e)}", file=sys.stderr)
 
-    print(f"DEBUG [Worker]: Beendet. Habe {row_counter} Zeilen gestreamt.", file=sys.stderr)
+    # Wichtig: Nichts zurückgeben, da yield genutzt wird
 
 def main():
-    logger.log_metric("Setup", "Status", 1, "Boolean", "Starte Spark Session")
+    logger = PipelineLogger(LOG_FILE)
 
-    spark = SparkSession.builder \
-        .appName("OpenSky_Streaming_Ingest") \
-        .master("local[*]") \
-        .config("spark.executor.memory", "2g") \
-        .config("spark.driver.memory", "2g") \
-        .getOrCreate()
+    # --- 1. MONITOR STARTEN (Als separater Prozess!) ---
+    monitor_script = os.path.join(os.path.dirname(__file__), 'system_monitor.py')
+    # Wir starten das Skript einfach parallel
+    monitor_process = subprocess.Popen([sys.executable, monitor_script])
 
-    sc = spark.sparkContext
-    sc.setLogLevel("WARN")
+    print("--- Monitor-Subprozess gestartet ---")
+    set_monitor_stage("1. Setup Spark")
 
-    s3_client = get_s3_client()
+    try:
+        logger.log_metric("Setup", "Status", 1, "Boolean", "Starte Spark Session")
 
-    # --- INTELLIGENTE SUCHE ---
-    logger.log_metric("Listing", "Start", 0, "ts", f"Suche erste valide Datei in {BUCKET_NAME}/{PREFIX}...")
-    print(f"DEBUG [Driver]: Scanne S3 Prefix '{PREFIX}' nach echten Daten...", file=sys.stderr)
+        spark = SparkSession.builder \
+            .appName("OpenSky_Streaming_Ingest") \
+            .master("local[*]") \
+            .config("spark.executor.memory", "2g") \
+            .config("spark.driver.memory", "2g") \
+            .getOrCreate()
 
-    paginator = s3_client.get_paginator('list_objects_v2')
-    page_iterator = paginator.paginate(Bucket=BUCKET_NAME, Prefix=PREFIX)
+        sc = spark.sparkContext
+        sc.setLogLevel("WARN")
 
-    found_file = None
+        set_monitor_stage("2. S3 Listing")
+        s3_client = get_s3_client()
 
-    for page in page_iterator:
-        if 'Contents' not in page: continue
-        for obj in page['Contents']:
-            key = obj['Key']
-            if not key.endswith('.tar'): continue
-            if "/." in key: continue
+        logger.log_metric("Listing", "Start", 0, "ts", f"Suche erste valide Datei in {BUCKET_NAME}/{PREFIX}...")
+        print(f"DEBUG [Driver]: Scanne S3 Prefix '{PREFIX}' nach echten Daten...", file=sys.stderr)
 
-            has_valid_year = False
-            for year in range(2010, 2030):
-                if f"/{year}-" in key or f"states/{year}-" in key:
-                    has_valid_year = True
-                    break
-            if not has_valid_year: continue
+        # Intelligente Suche
+        paginator = s3_client.get_paginator('list_objects_v2')
+        page_iterator = paginator.paginate(Bucket=BUCKET_NAME, Prefix=PREFIX)
+        found_file = None
+        for page in page_iterator:
+            if 'Contents' not in page: continue
+            for obj in page['Contents']:
+                key = obj['Key']
+                if not key.endswith('.tar'): continue
+                if "/." in key: continue
+                has_valid_year = False
+                for year in range(2010, 2030):
+                    if f"/{year}-" in key or f"states/{year}-" in key:
+                        has_valid_year = True
+                        break
+                if not has_valid_year: continue
+                found_file = key
+                break
+            if found_file: break
 
-            found_file = key
-            break
-        if found_file: break
+        if not found_file:
+            print("KEINE VALIDEN DATEN-DATEIEN GEFUNDEN!")
+            return
 
-    if not found_file:
-        print("KEINE VALIDEN DATEN-DATEIEN GEFUNDEN!")
+        print(f"DEBUG [Driver]: Gefunden! Nutze Datei: {found_file}", file=sys.stderr)
+        target_files = [found_file] * SCALE_FACTOR
+
+        # --- PROCESSING ---
+        set_monitor_stage("3. Lazy Plan & RDD")
+        num_partitions = max(2, len(target_files))
+        rdd_keys = sc.parallelize(target_files, numSlices=num_partitions)
+        raw_rdd = rdd_keys.mapPartitions(process_partition)
+
+        # Caching
+        raw_rdd.cache()
+
+        set_monitor_stage("4. ACTION: Download & Error Check")
+        start_proc = time.time()
+
+        # Action 1
+        errors = raw_rdd.filter(lambda x: isinstance(x, str) and "ERROR" in x).collect()
+        if errors:
+            print(f"WARNUNG: {len(errors)} Fehler aufgetreten.")
+
+        set_monitor_stage("5. Filter & Schema")
+        data_rdd = raw_rdd.filter(lambda x: isinstance(x, list) and len(x) == 16)
+
+        if data_rdd.isEmpty():
+            print("Keine Daten gefunden.")
+            return
+
+        schema = StructType([
+            StructField("time", StringType(), True),
+            StructField("icao24", StringType(), True),
+            StructField("lat", StringType(), True),
+            StructField("lon", StringType(), True),
+            StructField("velocity", StringType(), True),
+            StructField("heading", StringType(), True),
+            StructField("vertrate", StringType(), True),
+            StructField("callsign", StringType(), True),
+            StructField("onground", StringType(), True),
+            StructField("alert", StringType(), True),
+            StructField("spi", StringType(), True),
+            StructField("squawk", StringType(), True),
+            StructField("baroaltitude", StringType(), True),
+            StructField("geoaltitude", StringType(), True),
+            StructField("lastposupdate", StringType(), True),
+            StructField("lastcontact", StringType(), True)
+        ])
+
+        set_monitor_stage("6. Create DataFrame")
+        df = spark.createDataFrame(data_rdd, schema)
+        df = df.withColumn("velocity", df["velocity"].cast(DoubleType())) \
+            .withColumn("geoaltitude", df["geoaltitude"].cast(DoubleType()))
+
+        set_monitor_stage("7. ACTION: Write Parquet")
+        output_path = os.path.join("data", "processed", f"run_{int(time.time())}")
+        df.write.mode("overwrite").parquet(output_path)
+
+        duration_proc = time.time() - start_proc
+        row_count = df.count()
+
+        logger.log_metric("Processing", "Duration", duration_proc, "Seconds", f"Zeit")
+        logger.log_metric("Processing", "RowCount", row_count, "Rows", "Zeilen")
+        logger.log_metric("Storage", "Status", 1, "Boolean", f"Gespeichert: {output_path}")
+
+    finally:
+        # --- CLEANUP ---
+        set_monitor_stage("8. Cleanup")
+        print("--- Stoppe Monitor ---")
+        monitor_process.terminate()
+        try:
+            monitor_process.wait(timeout=2)
+        except subprocess.TimeoutExpired:
+            monitor_process.kill()
+
+        if os.path.exists(STAGE_FILE):
+            os.remove(STAGE_FILE)
+
         spark.stop()
-        return
-
-    print(f"DEBUG [Driver]: Gefunden! Nutze Datei: {found_file}", file=sys.stderr)
-
-    target_files = [found_file] * SCALE_FACTOR
-    logger.log_metric("Listing", "FileCount", len(target_files), "Count", f"Dateien: {target_files}")
-
-    num_partitions = max(2, len(target_files))
-    rdd_keys = sc.parallelize(target_files, numSlices=num_partitions)
-
-    start_proc = time.time()
-
-    # 1. Processing (Streaming)
-    raw_rdd = rdd_keys.mapPartitions(process_partition)
-
-    # 2. Caching
-    # Da wir streamen, ist Caching jetzt WICHTIGER DENN JE.
-    # Es "materialisiert" den Stream im RAM, damit wir ihn mehrfach nutzen können.
-    raw_rdd.cache()
-
-    errors = raw_rdd.filter(lambda x: isinstance(x, str) and "ERROR" in x).collect()
-    if errors:
-        print(f"WARNUNG: {len(errors)} Fehler aufgetreten.")
-
-    data_rdd = raw_rdd.filter(lambda x: isinstance(x, list) and len(x) == 16)
-
-    if data_rdd.isEmpty():
-        print("!!! WARNUNG: Keine validen Datenzeilen (16 Spalten) gefunden.")
-        spark.stop()
-        return
-
-    schema = StructType([
-        StructField("time", StringType(), True),
-        StructField("icao24", StringType(), True),
-        StructField("lat", StringType(), True),
-        StructField("lon", StringType(), True),
-        StructField("velocity", StringType(), True),
-        StructField("heading", StringType(), True),
-        StructField("vertrate", StringType(), True),
-        StructField("callsign", StringType(), True),
-        StructField("onground", StringType(), True),
-        StructField("alert", StringType(), True),
-        StructField("spi", StringType(), True),
-        StructField("squawk", StringType(), True),
-        StructField("baroaltitude", StringType(), True),
-        StructField("geoaltitude", StringType(), True),
-        StructField("lastposupdate", StringType(), True),
-        StructField("lastcontact", StringType(), True)
-    ])
-
-    df = spark.createDataFrame(data_rdd, schema)
-    df = df.withColumn("velocity", df["velocity"].cast(DoubleType())) \
-        .withColumn("geoaltitude", df["geoaltitude"].cast(DoubleType()))
-
-    row_count = df.count()
-    duration_proc = time.time() - start_proc
-
-    logger.log_metric("Processing", "Duration", duration_proc, "Seconds", f"Zeit")
-    logger.log_metric("Processing", "RowCount", row_count, "Rows", "Zeilen")
-
-    output_path = os.path.join("data", "processed", f"run_{int(time.time())}")
-    df.write.mode("overwrite").parquet(output_path)
-    logger.log_metric("Storage", "Status", 1, "Boolean", f"Gespeichert: {output_path}")
-
-    spark.stop()
 
 if __name__ == "__main__":
     main()
