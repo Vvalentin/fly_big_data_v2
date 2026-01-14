@@ -835,5 +835,86 @@
     "value": 1,
     "unit": "Count",
     "remarks": "Dateien: ['states/2020-05-25/00/states_2020-05-25-00.avro.tar']"
+  },
+  {
+    "timestamp": 1768386987.114154,
+    "iso_date": "2026-01-14T11:36:27.114154",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1768386993.67612,
+    "iso_date": "2026-01-14T11:36:33.676120",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Suche erste valide Datei in data-samples/states/..."
+  },
+  {
+    "timestamp": 1768386997.5035846,
+    "iso_date": "2026-01-14T11:36:37.503584",
+    "stage": "Listing",
+    "metric": "FileCount",
+    "value": 1,
+    "unit": "Count",
+    "remarks": "Dateien: ['states/2020-05-25/00/states_2020-05-25-00.avro.tar']"
+  },
+  {
+    "timestamp": 1768387125.5315142,
+    "iso_date": "2026-01-14T11:38:45.531514",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1768387131.4870358,
+    "iso_date": "2026-01-14T11:38:51.487035",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Suche erste valide Datei in data-samples/states/..."
+  },
+  {
+    "timestamp": 1768387135.3513916,
+    "iso_date": "2026-01-14T11:38:55.351391",
+    "stage": "Listing",
+    "metric": "FileCount",
+    "value": 1,
+    "unit": "Count",
+    "remarks": "Dateien: ['states/2020-05-25/00/states_2020-05-25-00.avro.tar']"
+  },
+  {
+    "timestamp": 1768387169.1616287,
+    "iso_date": "2026-01-14T11:39:29.161628",
+    "stage": "Processing",
+    "metric": "Duration",
+    "value": 33.566266775131226,
+    "unit": "Seconds",
+    "remarks": "Zeit"
+  },
+  {
+    "timestamp": 1768387169.1651537,
+    "iso_date": "2026-01-14T11:39:29.165153",
+    "stage": "Processing",
+    "metric": "RowCount",
+    "value": 723098,
+    "unit": "Rows",
+    "remarks": "Zeilen"
+  },
+  {
+    "timestamp": 1768387178.6032612,
+    "iso_date": "2026-01-14T11:39:38.603261",
+    "stage": "Storage",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Gespeichert: data\\processed\\run_1768387169"
   }
 ]
