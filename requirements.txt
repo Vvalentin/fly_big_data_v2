@@ -8,3 +8,6 @@ jupyter==1.0.0
 fastavro
 psutil
 pyarrow
+scikit-learn
+cartopy
+scipy
