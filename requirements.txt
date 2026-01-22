@@ -11,3 +11,4 @@ pyarrow
 scikit-learn
 cartopy
 scipy
+ipywidgets
