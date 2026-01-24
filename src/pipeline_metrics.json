@@ -169,5 +169,95 @@
     "value": 1,
     "unit": "Boolean",
     "remarks": "Gespeichert: data\\processed\\run_1768427048"
+  },
+  {
+    "timestamp": 1769293102.7493002,
+    "iso_date": "2026-01-24T23:18:22.749300",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1769293307.3660784,
+    "iso_date": "2026-01-24T23:21:47.366078",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1769293316.7006998,
+    "iso_date": "2026-01-24T23:21:56.700700",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Suche 20 Dateien in data-samples/states/..."
+  },
+  {
+    "timestamp": 1769293720.4445133,
+    "iso_date": "2026-01-24T23:28:40.444513",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1769293728.719159,
+    "iso_date": "2026-01-24T23:28:48.719158",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Suche 20 Dateien in data-samples/states/..."
+  },
+  {
+    "timestamp": 1769293937.4395728,
+    "iso_date": "2026-01-24T23:32:17.439572",
+    "stage": "Processing",
+    "metric": "Duration",
+    "value": 183.66494345664978,
+    "unit": "Seconds",
+    "remarks": "Zeit"
+  },
+  {
+    "timestamp": 1769293937.441573,
+    "iso_date": "2026-01-24T23:32:17.441572",
+    "stage": "Processing",
+    "metric": "RowCount",
+    "value": 3924491,
+    "unit": "Rows",
+    "remarks": "Zeilen"
+  },
+  {
+    "timestamp": 1769293937.4435809,
+    "iso_date": "2026-01-24T23:32:17.443581",
+    "stage": "Storage",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Gespeichert: data\\processed\\run_1769293893"
+  },
+  {
+    "timestamp": 1769294112.4353626,
+    "iso_date": "2026-01-24T23:35:12.435362",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1769294120.2525601,
+    "iso_date": "2026-01-24T23:35:20.252560",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Suche 20 Dateien in data-samples/states/..."
   }
 ]

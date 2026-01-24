@@ -1,4 +1,4 @@
-import subprocess  # <--- Wichtig für den Monitor-Start
+import subprocess
 import os
 import boto3
 import tarfile
@@ -14,7 +14,6 @@ from dotenv import load_dotenv
 # --- EIGENE IMPORTS ---
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from src.custom_logger import PipelineLogger
-# HIER WURDE DIE ZEILE ENTFERNT: from src.system_monitor import SystemMonitor (Brauchen wir nicht mehr)
 
 # --- WINDOWS SETUP ---
 os.environ['PYSPARK_PYTHON'] = sys.executable
@@ -27,12 +26,29 @@ if 'SPARK_HOME' in os.environ:
     del os.environ['SPARK_HOME']
 # ---------------------
 
+java_path = r"C:\Program Files\Java\jdk-21"
+
+if os.path.exists(java_path):
+    os.environ["JAVA_HOME"] = java_path
+    # Wichtig: Das bin-Verzeichnis muss GANZ VORNE in den Path,
+    # damit Windows nicht das alte Java 11 findet.
+    os.environ["PATH"] = os.path.join(java_path, "bin") + ";" + os.environ["PATH"]
+else:
+    print(f"WARNUNG: Java Pfad {java_path} nicht gefunden! Prüfe den Pfad.", file=sys.stderr)
+
 load_dotenv()
 BUCKET_NAME = os.getenv("BUCKET_NAME", "data-samples")
 PREFIX = os.getenv("PREFIX", "states/")
 ENDPOINT_URL = os.getenv("S3_ENDPOINT", "https://s3.opensky-network.org")
 LOG_FILE = os.getenv("LOG_FILE", "pipeline_metrics.json")
-SCALE_FACTOR = int(os.getenv("SCALE_FACTOR", "1"))
+
+# ==========================================
+# ⚙️ KONFIGURATION: ANZAHL DATEIEN
+# ==========================================
+# Hier einstellen, wie viele echte Dateien geladen werden sollen.
+# Alle landen in EINEM Parquet-Output.
+NUM_FILES_TO_PROCESS = 20
+# ==========================================
 
 # Datei für Kommunikation zwischen Spark und Monitor
 STAGE_FILE = os.path.join("data", "current_stage.txt")
@@ -140,7 +156,6 @@ def main():
 
     # --- 1. MONITOR STARTEN (Als separater Prozess!) ---
     monitor_script = os.path.join(os.path.dirname(__file__), 'system_monitor.py')
-    # Wir starten das Skript einfach parallel
     monitor_process = subprocess.Popen([sys.executable, monitor_script])
 
     print("--- Monitor-Subprozess gestartet ---")
@@ -162,40 +177,58 @@ def main():
         set_monitor_stage("2. S3 Listing")
         s3_client = get_s3_client()
 
-        logger.log_metric("Listing", "Start", 0, "ts", f"Suche erste valide Datei in {BUCKET_NAME}/{PREFIX}...")
-        print(f"DEBUG [Driver]: Scanne S3 Prefix '{PREFIX}' nach echten Daten...", file=sys.stderr)
+        logger.log_metric("Listing", "Start", 0, "ts", f"Suche {NUM_FILES_TO_PROCESS} Dateien in {BUCKET_NAME}/{PREFIX}...")
+        print(f"DEBUG [Driver]: Scanne S3 Prefix '{PREFIX}' nach {NUM_FILES_TO_PROCESS} Dateien...", file=sys.stderr)
 
-        # Intelligente Suche
+        # --- NEUE LOGIK: Sammle bis zu NUM_FILES_TO_PROCESS echte Dateien ---
         paginator = s3_client.get_paginator('list_objects_v2')
         page_iterator = paginator.paginate(Bucket=BUCKET_NAME, Prefix=PREFIX)
-        found_file = None
+
+        valid_files = []
+
         for page in page_iterator:
             if 'Contents' not in page: continue
             for obj in page['Contents']:
                 key = obj['Key']
+
+                # Filter-Kriterien
                 if not key.endswith('.tar'): continue
-                if "/." in key: continue
+                if "/." in key: continue # Systemordner ignorieren
+
+                # Jahres-Check (Optional, aber gut für Datenqualität)
                 has_valid_year = False
                 for year in range(2010, 2030):
                     if f"/{year}-" in key or f"states/{year}-" in key:
                         has_valid_year = True
                         break
                 if not has_valid_year: continue
-                found_file = key
-                break
-            if found_file: break
 
-        if not found_file:
+                # Zur Liste hinzufügen
+                valid_files.append(key)
+
+                # Abbruch, wenn genug Dateien gefunden
+                if len(valid_files) >= NUM_FILES_TO_PROCESS:
+                    break
+
+            if len(valid_files) >= NUM_FILES_TO_PROCESS:
+                break
+
+        if not valid_files:
             print("KEINE VALIDEN DATEN-DATEIEN GEFUNDEN!")
             return
 
-        print(f"DEBUG [Driver]: Gefunden! Nutze Datei: {found_file}", file=sys.stderr)
-        target_files = [found_file] * SCALE_FACTOR
+        print(f"DEBUG [Driver]: {len(valid_files)} Dateien gefunden. Starte Verarbeitung...", file=sys.stderr)
+
+        # Die Liste der echten Dateien wird nun verwendet
+        target_files = valid_files
 
         # --- PROCESSING ---
-        set_monitor_stage("3. Lazy Plan & RDD")
+        set_monitor_stage(f"3. Lazy Plan & RDD ({len(target_files)} Files)")
+
+        # Slices so wählen, dass Partitionen gut verteilt sind (min 2, oder Anzahl der Dateien)
         num_partitions = max(2, len(target_files))
         rdd_keys = sc.parallelize(target_files, numSlices=num_partitions)
+
         raw_rdd = rdd_keys.mapPartitions(process_partition)
 
         # Caching
@@ -235,13 +268,24 @@ def main():
             StructField("lastcontact", StringType(), True)
         ])
 
+        from pyspark.sql.functions import expr, col
+
         set_monitor_stage("6. Create DataFrame")
         df = spark.createDataFrame(data_rdd, schema)
-        df = df.withColumn("velocity", df["velocity"].cast(DoubleType())) \
-            .withColumn("geoaltitude", df["geoaltitude"].cast(DoubleType()))
+
+        # 'try_cast': Verwandelt Müll-Daten in NULL, statt abzustürzen.
+        # Das fängt die Zeilen ab, die fälschlicherweise als Text gelesen wurden.
+        df = df.withColumn("velocity", expr("try_cast(velocity as double)")) \
+            .withColumn("geoaltitude", expr("try_cast(geoaltitude as double)"))
+
+        # WICHTIG: Die Müll-Zeilen (wo velocity jetzt NULL ist) werfen wir weg.
+        df = df.filter(col("velocity").isNotNull())
 
         set_monitor_stage("7. ACTION: Write Parquet")
         output_path = os.path.join("data", "processed", f"run_{int(time.time())}")
+
+        # Hier wird alles in EINEN Parquet-Ordner geschrieben.
+        # Spark kümmert sich um das Mergen der Ergebnisse.
         df.write.mode("overwrite").parquet(output_path)
 
         duration_proc = time.time() - start_proc
