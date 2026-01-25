@@ -166,10 +166,11 @@ def main():
     try:
         logger.log_metric("Setup", "Status", 1, "Boolean", "Starte Spark Session")
 
-        # RAM ERHÖHT AUF 4GB
         spark = SparkSession.builder \
             .appName("OpenSky_Streaming_Ingest") \
             .master("local[*]") \
+            .config("spark.driver.bindAddress", "127.0.0.1") \
+            .config("spark.driver.host", "127.0.0.1") \
             .config("spark.executor.memory", "4g") \
             .config("spark.driver.memory", "4g") \
             .config("spark.sql.shuffle.partitions", "200") \
@@ -229,7 +230,6 @@ def main():
 
         set_monitor_stage("4. Filter & Schema")
         start_proc = time.time()
-
 
         # Nur Listen (echte Daten) durchlassen, Fehler-Strings ignorieren
         data_rdd = raw_rdd.filter(lambda x: isinstance(x, list) and len(x) == 16)
