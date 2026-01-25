@@ -259,5 +259,311 @@
     "value": 0,
     "unit": "ts",
     "remarks": "Suche 20 Dateien in data-samples/states/..."
+  },
+  {
+    "timestamp": 1769335107.447943,
+    "iso_date": "2026-01-25T10:58:27.447943",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1769335118.9467301,
+    "iso_date": "2026-01-25T10:58:38.946730",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Suche 50 Dateien in data-samples/states/..."
+  },
+  {
+    "timestamp": 1769335666.2381315,
+    "iso_date": "2026-01-25T11:07:46.238131",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1769335674.2595456,
+    "iso_date": "2026-01-25T11:07:54.259545",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Suche 50 Dateien in data-samples/states/..."
+  },
+  {
+    "timestamp": 1769336032.0078862,
+    "iso_date": "2026-01-25T11:13:52.007886",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1769336039.6915154,
+    "iso_date": "2026-01-25T11:13:59.691515",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Suche 50 Dateien in data-samples/states/..."
+  },
+  {
+    "timestamp": 1769336466.2118313,
+    "iso_date": "2026-01-25T11:21:06.211831",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1769336474.0302439,
+    "iso_date": "2026-01-25T11:21:14.030243",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Suche 50 Dateien..."
+  },
+  {
+    "timestamp": 1769336942.4285383,
+    "iso_date": "2026-01-25T11:29:02.428538",
+    "stage": "Processing",
+    "metric": "Duration",
+    "value": 464.02591252326965,
+    "unit": "Seconds",
+    "remarks": "Zeit"
+  },
+  {
+    "timestamp": 1769336942.4305396,
+    "iso_date": "2026-01-25T11:29:02.430539",
+    "stage": "Storage",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Gespeichert: data\\processed\\run_1769336484"
+  },
+  {
+    "timestamp": 1769337210.2987914,
+    "iso_date": "2026-01-25T11:33:30.298791",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1769337218.3539863,
+    "iso_date": "2026-01-25T11:33:38.353986",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Suche 9 Dateien..."
+  },
+  {
+    "timestamp": 1769337312.6139684,
+    "iso_date": "2026-01-25T11:35:12.613968",
+    "stage": "Processing",
+    "metric": "Duration",
+    "value": 90.07450127601624,
+    "unit": "Seconds",
+    "remarks": "Zeit"
+  },
+  {
+    "timestamp": 1769337312.6159682,
+    "iso_date": "2026-01-25T11:35:12.615968",
+    "stage": "Storage",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Gespeichert: data\\processed\\run_1769337228"
+  },
+  {
+    "timestamp": 1769337396.9197075,
+    "iso_date": "2026-01-25T11:36:36.919707",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1769337404.8471487,
+    "iso_date": "2026-01-25T11:36:44.847148",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Suche 8 Dateien..."
+  },
+  {
+    "timestamp": 1769337487.0872989,
+    "iso_date": "2026-01-25T11:38:07.087298",
+    "stage": "Processing",
+    "metric": "Duration",
+    "value": 78.32603526115417,
+    "unit": "Seconds",
+    "remarks": "Zeit"
+  },
+  {
+    "timestamp": 1769337487.0892987,
+    "iso_date": "2026-01-25T11:38:07.089298",
+    "stage": "Storage",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Gespeichert: data\\processed\\run_1769337414"
+  },
+  {
+    "timestamp": 1769337698.5920656,
+    "iso_date": "2026-01-25T11:41:38.592065",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1769337706.6976476,
+    "iso_date": "2026-01-25T11:41:46.697647",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Suche 5 Dateien..."
+  },
+  {
+    "timestamp": 1769337768.063305,
+    "iso_date": "2026-01-25T11:42:48.063304",
+    "stage": "Processing",
+    "metric": "Duration",
+    "value": 57.21856880187988,
+    "unit": "Seconds",
+    "remarks": "Zeit"
+  },
+  {
+    "timestamp": 1769337768.0653067,
+    "iso_date": "2026-01-25T11:42:48.065306",
+    "stage": "Storage",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Gespeichert: data\\processed\\run_1769337716"
+  },
+  {
+    "timestamp": 1769337807.9504495,
+    "iso_date": "2026-01-25T11:43:27.950449",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1769337816.0599449,
+    "iso_date": "2026-01-25T11:43:36.059944",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Suche 8 Dateien..."
+  },
+  {
+    "timestamp": 1769337902.5146966,
+    "iso_date": "2026-01-25T11:45:02.514696",
+    "stage": "Processing",
+    "metric": "Duration",
+    "value": 81.9232702255249,
+    "unit": "Seconds",
+    "remarks": "Zeit"
+  },
+  {
+    "timestamp": 1769337902.5172136,
+    "iso_date": "2026-01-25T11:45:02.517213",
+    "stage": "Storage",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Gespeichert: data\\processed\\run_1769337830"
+  },
+  {
+    "timestamp": 1769337943.445937,
+    "iso_date": "2026-01-25T11:45:43.445937",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1769337951.4395401,
+    "iso_date": "2026-01-25T11:45:51.439540",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Suche 7 Dateien..."
+  },
+  {
+    "timestamp": 1769338024.4559913,
+    "iso_date": "2026-01-25T11:47:04.455991",
+    "stage": "Processing",
+    "metric": "Duration",
+    "value": 68.99839067459106,
+    "unit": "Seconds",
+    "remarks": "Zeit"
+  },
+  {
+    "timestamp": 1769338024.457999,
+    "iso_date": "2026-01-25T11:47:04.457999",
+    "stage": "Storage",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Gespeichert: data\\processed\\run_1769337961"
+  },
+  {
+    "timestamp": 1769338044.7904773,
+    "iso_date": "2026-01-25T11:47:24.790477",
+    "stage": "Setup",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Starte Spark Session"
+  },
+  {
+    "timestamp": 1769338052.6866455,
+    "iso_date": "2026-01-25T11:47:32.686645",
+    "stage": "Listing",
+    "metric": "Start",
+    "value": 0,
+    "unit": "ts",
+    "remarks": "Suche 6 Dateien..."
+  },
+  {
+    "timestamp": 1769338119.0866218,
+    "iso_date": "2026-01-25T11:48:39.086621",
+    "stage": "Processing",
+    "metric": "Duration",
+    "value": 62.36934995651245,
+    "unit": "Seconds",
+    "remarks": "Zeit"
+  },
+  {
+    "timestamp": 1769338119.0896285,
+    "iso_date": "2026-01-25T11:48:39.089628",
+    "stage": "Storage",
+    "metric": "Status",
+    "value": 1,
+    "unit": "Boolean",
+    "remarks": "Gespeichert: data\\processed\\run_1769338062"
   }
 ]

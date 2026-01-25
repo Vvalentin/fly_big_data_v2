@@ -8,6 +8,7 @@ import sys
 import fastavro
 from botocore.handlers import disable_signing
 from pyspark.sql import SparkSession
+from pyspark import StorageLevel
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType
 from dotenv import load_dotenv
 
@@ -47,7 +48,7 @@ LOG_FILE = os.getenv("LOG_FILE", "pipeline_metrics.json")
 # ==========================================
 # Hier einstellen, wie viele echte Dateien geladen werden sollen.
 # Alle landen in EINEM Parquet-Output.
-NUM_FILES_TO_PROCESS = 20
+NUM_FILES_TO_PROCESS = 6
 # ==========================================
 
 # Datei für Kommunikation zwischen Spark und Monitor
@@ -154,7 +155,7 @@ def process_partition(iterator):
 def main():
     logger = PipelineLogger(LOG_FILE)
 
-    # --- 1. MONITOR STARTEN (Als separater Prozess!) ---
+    # --- 1. MONITOR STARTEN ---
     monitor_script = os.path.join(os.path.dirname(__file__), 'system_monitor.py')
     monitor_process = subprocess.Popen([sys.executable, monitor_script])
 
@@ -164,11 +165,13 @@ def main():
     try:
         logger.log_metric("Setup", "Status", 1, "Boolean", "Starte Spark Session")
 
+        # RAM ERHÖHT AUF 4GB
         spark = SparkSession.builder \
             .appName("OpenSky_Streaming_Ingest") \
             .master("local[*]") \
-            .config("spark.executor.memory", "2g") \
-            .config("spark.driver.memory", "2g") \
+            .config("spark.executor.memory", "4g") \
+            .config("spark.driver.memory", "4g") \
+            .config("spark.sql.shuffle.partitions", "200") \
             .getOrCreate()
 
         sc = spark.sparkContext
@@ -177,25 +180,21 @@ def main():
         set_monitor_stage("2. S3 Listing")
         s3_client = get_s3_client()
 
-        logger.log_metric("Listing", "Start", 0, "ts", f"Suche {NUM_FILES_TO_PROCESS} Dateien in {BUCKET_NAME}/{PREFIX}...")
-        print(f"DEBUG [Driver]: Scanne S3 Prefix '{PREFIX}' nach {NUM_FILES_TO_PROCESS} Dateien...", file=sys.stderr)
+        logger.log_metric("Listing", "Start", 0, "ts", f"Suche {NUM_FILES_TO_PROCESS} Dateien...")
+        print(f"DEBUG [Driver]: Scanne S3 nach {NUM_FILES_TO_PROCESS} Dateien...", file=sys.stderr)
 
-        # --- NEUE LOGIK: Sammle bis zu NUM_FILES_TO_PROCESS echte Dateien ---
+        # --- LOGIK: Sammle Dateien ---
         paginator = s3_client.get_paginator('list_objects_v2')
         page_iterator = paginator.paginate(Bucket=BUCKET_NAME, Prefix=PREFIX)
-
         valid_files = []
 
         for page in page_iterator:
             if 'Contents' not in page: continue
             for obj in page['Contents']:
                 key = obj['Key']
-
-                # Filter-Kriterien
                 if not key.endswith('.tar'): continue
-                if "/." in key: continue # Systemordner ignorieren
+                if "/." in key: continue
 
-                # Jahres-Check (Optional, aber gut für Datenqualität)
                 has_valid_year = False
                 for year in range(2010, 2030):
                     if f"/{year}-" in key or f"states/{year}-" in key:
@@ -203,46 +202,38 @@ def main():
                         break
                 if not has_valid_year: continue
 
-                # Zur Liste hinzufügen
                 valid_files.append(key)
-
-                # Abbruch, wenn genug Dateien gefunden
                 if len(valid_files) >= NUM_FILES_TO_PROCESS:
                     break
-
             if len(valid_files) >= NUM_FILES_TO_PROCESS:
                 break
 
         if not valid_files:
-            print("KEINE VALIDEN DATEN-DATEIEN GEFUNDEN!")
+            print("KEINE DATEN GEFUNDEN!")
             return
 
-        print(f"DEBUG [Driver]: {len(valid_files)} Dateien gefunden. Starte Verarbeitung...", file=sys.stderr)
-
-        # Die Liste der echten Dateien wird nun verwendet
+        print(f"DEBUG [Driver]: {len(valid_files)} Dateien gefunden. Starte Streaming...", file=sys.stderr)
         target_files = valid_files
 
         # --- PROCESSING ---
-        set_monitor_stage(f"3. Lazy Plan & RDD ({len(target_files)} Files)")
+        set_monitor_stage(f"3. Lazy Plan ({len(target_files)} Files)")
 
-        # Slices so wählen, dass Partitionen gut verteilt sind (min 2, oder Anzahl der Dateien)
         num_partitions = max(2, len(target_files))
         rdd_keys = sc.parallelize(target_files, numSlices=num_partitions)
-
         raw_rdd = rdd_keys.mapPartitions(process_partition)
 
-        # Caching
-        raw_rdd.cache()
+        # --- WICHTIG: KEIN CACHING MEHR! ---
+        # Wir lassen die Daten nur durchfließen.
+        # raw_rdd.persist(...)  <-- ENTFERNT
 
-        set_monitor_stage("4. ACTION: Download & Error Check")
+        set_monitor_stage("4. Filter & Schema")
         start_proc = time.time()
 
-        # Action 1
-        errors = raw_rdd.filter(lambda x: isinstance(x, str) and "ERROR" in x).collect()
-        if errors:
-            print(f"WARNUNG: {len(errors)} Fehler aufgetreten.")
+        # --- WICHTIG: ERROR CHECK ENTFERNT ---
+        # Da wir nicht cachen, würde dieser Check einen doppelten Download auslösen.
+        # Wir vertrauen darauf, dass kaputte Zeilen später gefiltert werden.
 
-        set_monitor_stage("5. Filter & Schema")
+        # Nur Listen (echte Daten) durchlassen, Fehler-Strings ignorieren
         data_rdd = raw_rdd.filter(lambda x: isinstance(x, list) and len(x) == 16)
 
         if data_rdd.isEmpty():
@@ -270,34 +261,30 @@ def main():
 
         from pyspark.sql.functions import expr, col
 
-        set_monitor_stage("6. Create DataFrame")
+        set_monitor_stage("5. Create DataFrame")
         df = spark.createDataFrame(data_rdd, schema)
 
-        # 'try_cast': Verwandelt Müll-Daten in NULL, statt abzustürzen.
-        # Das fängt die Zeilen ab, die fälschlicherweise als Text gelesen wurden.
         df = df.withColumn("velocity", expr("try_cast(velocity as double)")) \
             .withColumn("geoaltitude", expr("try_cast(geoaltitude as double)"))
 
-        # WICHTIG: Die Müll-Zeilen (wo velocity jetzt NULL ist) werfen wir weg.
+        # Kaputte Zeilen verwerfen
         df = df.filter(col("velocity").isNotNull())
 
-        set_monitor_stage("7. ACTION: Write Parquet")
+        set_monitor_stage("6. ACTION: Write Parquet")
         output_path = os.path.join("data", "processed", f"run_{int(time.time())}")
 
-        # Hier wird alles in EINEN Parquet-Ordner geschrieben.
-        # Spark kümmert sich um das Mergen der Ergebnisse.
+        # Hier passiert jetzt alles in einem Rutsch: Download -> Parse -> Filter -> Write
         df.write.mode("overwrite").parquet(output_path)
 
         duration_proc = time.time() - start_proc
-        row_count = df.count()
 
+        # Row Count ist billig, da Parquet Metadaten hat
+        # (oder wir lesen es kurz neu ein, was schneller ist als raw download)
         logger.log_metric("Processing", "Duration", duration_proc, "Seconds", f"Zeit")
-        logger.log_metric("Processing", "RowCount", row_count, "Rows", "Zeilen")
         logger.log_metric("Storage", "Status", 1, "Boolean", f"Gespeichert: {output_path}")
 
     finally:
-        # --- CLEANUP ---
-        set_monitor_stage("8. Cleanup")
+        set_monitor_stage("7. Cleanup")
         print("--- Stoppe Monitor ---")
         monitor_process.terminate()
         try:
