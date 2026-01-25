@@ -1,31 +1,50 @@
 import subprocess
 import os
+import io
 import boto3
 import tarfile
-import io
 import time
 import sys
 import fastavro
+from dotenv import load_dotenv  # <--- WICHTIG: Import hier oben
 from botocore.handlers import disable_signing
 from pyspark.sql import SparkSession
 from pyspark import StorageLevel
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType
-from dotenv import load_dotenv
 
 # --- EIGENE IMPORTS ---
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from src.custom_logger import PipelineLogger
 
-# --- WINDOWS SETUP ---
+# ==========================================
+# WINDOWS SETUP & CONFIG (ANGEPASST)
+# ==========================================
+
+# 1. Konfiguration SOFORT laden, damit HADOOP_HOME aus .env verfügbar ist
+load_dotenv()
+
 os.environ['PYSPARK_PYTHON'] = sys.executable
 os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
-os.environ['HADOOP_HOME'] = "C:\\hadoop"
-hadoop_bin = os.path.join(os.environ['HADOOP_HOME'], 'bin')
-if hadoop_bin not in os.environ['PATH']:
-    os.environ['PATH'] += ";" + hadoop_bin
+
+# 2. Dynamische Hadoop-Logik:
+# Prüfen, ob HADOOP_HOME im System ist -> Nein? Dann in .env schauen -> Nein? Dann Fallback.
+if 'HADOOP_HOME' not in os.environ:
+    env_hadoop = os.getenv('HADOOP_HOME')
+    if env_hadoop:
+        os.environ['HADOOP_HOME'] = env_hadoop
+        print(f"DEBUG: HADOOP_HOME aus .env gesetzt: {env_hadoop}")
+    else:
+        print("WARNUNG: HADOOP_HOME nicht gefunden. Setze Fallback auf C:\\hadoop")
+        os.environ['HADOOP_HOME'] = "C:\\hadoop"
+
+# 3. Bin-Ordner zum PATH hinzufügen
+if 'HADOOP_HOME' in os.environ:
+    hadoop_bin = os.path.join(os.environ['HADOOP_HOME'], 'bin')
+    if hadoop_bin not in os.environ['PATH']:
+        os.environ['PATH'] += ";" + hadoop_bin
+
 if 'SPARK_HOME' in os.environ:
     del os.environ['SPARK_HOME']
-# ---------------------
 
 java_path = r"C:\Program Files\Java\jdk-21"
 
@@ -41,7 +60,7 @@ load_dotenv()
 BUCKET_NAME = os.getenv("BUCKET_NAME", "data-samples")
 PREFIX = os.getenv("PREFIX", "states/")
 ENDPOINT_URL = os.getenv("S3_ENDPOINT", "https://s3.opensky-network.org")
-LOG_FILE = os.getenv("LOG_FILE", "pipeline_metrics.json")
+LOG_FILE = os.getenv("LOG_FILE", "data/pipeline_metrics.json")
 
 # ==========================================
 # ⚙️ KONFIGURATION: ANZAHL DATEIEN
