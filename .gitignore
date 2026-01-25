@@ -4,10 +4,6 @@
 
 # Riesige Datenmengen
 data/
-*.tar
-*.csv
-*.parquet
-*.avro
 
 # Python & Umgebung
 .venv1/
