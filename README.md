@@ -37,29 +37,28 @@ Ein Hilfsmodul für strukturiertes Logging.
 
 ---
 
-## Ablauf der Ausführung (Datenbeschaffung)
+## Ablauf der Ausführung
 
-Um alle benötigten Daten für das Projekt herunterzuladen und vorzubereiten, führe bitte die folgenden zwei Python-Skripte nacheinander im Hauptverzeichnis aus.
+**Schritt 1: Requierments installieren**
 
-**Hinweis:** Hilfsskripte wie der Logger oder der Monitor werden dabei automatisch im Hintergrund ausgeführt.
+* Erstelle eine virtuelle Umgebung (.venv) und installiere darin alle notwendigen Abhängigkeiten mit dem Befehl **pip install -r requirements.txt**
 
-**Schritt 1: Flugdaten (States) verarbeiten**
-Startet den Spark-Job zur Verarbeitung der Bewegungsdaten. Dies generiert automatisch die `pipeline_metrics.json` und speichert die Parquet-Dateien.
+**Schritt 2: Flugdaten (States) verarbeiten**
 
-> Führe dazu die Datei **src/spark_ingest_s3.py** mit Python aus.
+* Führe dazu die Datei **src/spark_ingest_s3.py** aus.
 
-**Schritt 2: Flugzeug-Datenbank laden**
-Lädt die Stammdaten (Flugzeugtypen, Hersteller) herunter und bereinigt sie. Dies ist notwendig, um später ICAO-Adressen zu identifizieren.
+**Schritt 3: Flugzeug-Datenbank laden**
 
-> Führe anschließend die Datei **src/aircraft_type_ingest_s3.py** mit Python aus.
+* Führe die Datei **src/aircraft_type_ingest_s3.py** aus.
 
----
+**Datenstruktur:**
 
-## Datenstruktur
+* Nach erfolgreicher Ausführung sieht die Ordnerstruktur wie folgt aus:
+    * `data/processed/`: Enthält die Ordner der einzelnen Spark-Runs mit den Flugdaten (Parquet).
+    * `data/external/`: Enthält die `aircraft_database.parquet`.
+    * `data/system_metrics.csv`: Performance-Log des letzten Durchlaufs.
+    * `data/pipeline_metrics.json`: Detailliertes Log der ETL-Schritte.
 
-Nach erfolgreicher Ausführung sieht die Ordnerstruktur wie folgt aus:
+**Schritt 4: Notebooks**
 
-* `data/processed/`: Enthält die Ordner der einzelnen Spark-Runs mit den Flugdaten (Parquet).
-* `data/external/`: Enthält die `aircraft_database.parquet`.
-* `data/system_metrics.csv`: Performance-Log des letzten Durchlaufs.
-* `data/pipeline_metrics.json`: Detailliertes Log der ETL-Schritte.
+* Sobald alle Daten bereitliegen, können die Analysen gestartet werden. Die Jupyter Notebooks befinden sich im Ordner notebooks/ und sind in die Bereiche Data Validation, Download Performance und Use Cases unterteilt.
