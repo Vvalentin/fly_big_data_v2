@@ -4,9 +4,6 @@ import pandas as pd
 from dotenv import load_dotenv
 from botocore.handlers import disable_signing
 
-# ==========================================
-# KONFIGURATION
-# ==========================================
 load_dotenv()
 
 # S3 Einstellungen
@@ -14,9 +11,9 @@ BUCKET_NAME = os.getenv("BUCKET_NAME", "data-samples")
 ENDPOINT_URL = os.getenv("S3_ENDPOINT", "https://s3.opensky-network.org")
 
 # Datei-Einstellungen
-TARGET_FILENAME = "aircraft-database-complete-2025-08.csv" # Dein exakter Name
+TARGET_FILENAME = "aircraft-database-complete-2025-08.csv"
 OUTPUT_DIR = "data/external"
-OUTPUT_PARQUET = "aircraft_database.parquet" # Sauberer Name für dein Notebook
+OUTPUT_PARQUET = "aircraft_database.parquet"
 
 def get_s3_client():
     s3 = boto3.client('s3', endpoint_url=ENDPOINT_URL)
@@ -29,7 +26,7 @@ def main():
     s3 = get_s3_client()
     found_key = None
 
-    # 1. DATEI SUCHEN (Metadata Ordner zuerst, dann Root)
+    # 1. DATEI SUCHEN
     print(f"Suche Datei in Bucket '{BUCKET_NAME}'...")
     
     # Check 1: Direkt in metadata/
@@ -45,7 +42,7 @@ def main():
         except:
             pass
 
-    # Fallback: Falls der Name doch leicht anders ist (z.B. aircraftDatabase vs aircraft-database)
+    # Fallback: Falls der Name doch leicht anders ist
     if not found_key:
         print("⚠️ Exakter Name nicht gefunden. Suche fuzzy nach '2025-08'...")
         paginator = s3.get_paginator('list_objects_v2')
@@ -58,7 +55,7 @@ def main():
             if found_key: break
 
     if not found_key:
-        print("❌ Datei absolut nicht gefunden. Prüfe den Namen im S3 Browser.")
+        print("Datei absolut nicht gefunden. Prüfe den Namen im S3 Browser.")
         return
 
     print(f"Gefunden: {found_key}")
@@ -69,26 +66,23 @@ def main():
     try:
         obj = s3.get_object(Bucket=BUCKET_NAME, Key=found_key)
         
-        # Direktes Lesen mit Pandas (Chunking für Speicher-Effizienz)
-        # Wir lesen und schreiben nicht in Chunks, da 100MB in RAM passen.
-        # Falls dein PC < 4GB RAM hat, sag Bescheid.
+        # Direktes Lesen mit Pandas
         df = pd.read_csv(
             obj['Body'],
-            dtype=str,             # Alles als Text (sicherste Methode)
-            quotechar="'",         # WICHTIG für OpenSky
+            dtype=str,            
+            quotechar="'",         
             skipinitialspace=True,
             encoding='utf-8',
             on_bad_lines='skip'
         )
         
-        # Optional: Nur wichtige Spalten behalten (macht es kleiner)
-        # Wenn du unsicher bist, kommentiere den Block aus.
+        # Nur relevante Spalten behalten
         cols_to_keep = ['icao24', 'manufacturerName', 'model', 'typecode', 'categoryDescription', 'operator']
         existing_cols = [c for c in cols_to_keep if c in df.columns]
         if existing_cols:
             df = df[existing_cols]
 
-        # Duplikate bei icao24 entfernen (sonst explodiert der Join)
+        # Duplikate bei icao24 entfernen
         if 'icao24' in df.columns:
             df = df.drop_duplicates(subset=['icao24'])
 
@@ -98,7 +92,7 @@ def main():
         
         df.to_parquet(out_path, index=False)
         
-        print(f"🎉 Fertig! Gespeichert als: {out_path}")
+        print(f"Fertig! Gespeichert als: {out_path}")
         print(f"   -> Anzahl Flugzeuge: {len(df):,}")
         
     except Exception as e:
