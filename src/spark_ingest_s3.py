@@ -1,25 +1,19 @@
 import subprocess
 import os
-import io
 import boto3
 import tarfile
 import time
 import sys
-import fastavro
-from dotenv import load_dotenv  # <--- WICHTIG: Import hier oben
+from dotenv import load_dotenv
 from botocore.handlers import disable_signing
 from pyspark.sql import SparkSession
-from pyspark import StorageLevel
-from pyspark.sql.types import StructType, StructField, StringType, DoubleType
+from pyspark.sql.types import StructType, StructField, StringType
 
 # --- EIGENE IMPORTS ---
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from src.custom_logger import PipelineLogger
 
-# ==========================================
-# WINDOWS SETUP & CONFIG (ANGEPASST)
-# ==========================================
-
+# WINDOWS SETUP & CONFIG
 # 1. Konfiguration SOFORT laden, damit HADOOP_HOME aus .env verfügbar ist
 load_dotenv()
 
@@ -46,15 +40,6 @@ if 'HADOOP_HOME' in os.environ:
 if 'SPARK_HOME' in os.environ:
     del os.environ['SPARK_HOME']
 
-java_path = r"C:\Program Files\Java\jdk-21"
-
-if os.path.exists(java_path):
-    os.environ["JAVA_HOME"] = java_path
-    # Wichtig: Das bin-Verzeichnis muss GANZ VORNE in den Path,
-    # damit Windows nicht das alte Java 11 findet.
-    os.environ["PATH"] = os.path.join(java_path, "bin") + ";" + os.environ["PATH"]
-else:
-    print(f"WARNUNG: Java Pfad {java_path} nicht gefunden! Prüfe den Pfad.", file=sys.stderr)
 
 load_dotenv()
 BUCKET_NAME = os.getenv("BUCKET_NAME", "data-samples")
@@ -62,13 +47,10 @@ PREFIX = os.getenv("PREFIX", "states/")
 ENDPOINT_URL = os.getenv("S3_ENDPOINT", "https://s3.opensky-network.org")
 LOG_FILE = os.getenv("LOG_FILE", "data/pipeline_metrics.json")
 
-# ==========================================
-# ⚙️ KONFIGURATION: ANZAHL DATEIEN
-# ==========================================
+# KONFIGURATION: ANZAHL DATEIEN
 # Hier einstellen, wie viele echte Dateien geladen werden sollen.
-# Alle landen in EINEM Parquet-Output.
 NUM_FILES_TO_PROCESS = 6
-# ==========================================
+
 
 # Datei für Kommunikation zwischen Spark und Monitor
 STAGE_FILE = os.path.join("data", "current_stage.txt")
@@ -248,9 +230,6 @@ def main():
         set_monitor_stage("4. Filter & Schema")
         start_proc = time.time()
 
-        # --- WICHTIG: ERROR CHECK ENTFERNT ---
-        # Da wir nicht cachen, würde dieser Check einen doppelten Download auslösen.
-        # Wir vertrauen darauf, dass kaputte Zeilen später gefiltert werden.
 
         # Nur Listen (echte Daten) durchlassen, Fehler-Strings ignorieren
         data_rdd = raw_rdd.filter(lambda x: isinstance(x, list) and len(x) == 16)
