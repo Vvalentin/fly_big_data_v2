@@ -1,0 +1,18 @@
+[
+  {
+    "timestamp": 1770133999.6587262,
+    "category": "Ingestion",
+    "name": "Aircraft_DB_Duration",
+    "value": 32.28,
+    "unit": "Seconds",
+    "description": "Download & Save Time"
+  },
+  {
+    "timestamp": 1770133999.659733,
+    "category": "Data",
+    "name": "Aircraft_Count",
+    "value": 616675,
+    "unit": "Rows",
+    "description": "Anzahl Flugzeuge"
+  }
+]
