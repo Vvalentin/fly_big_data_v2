@@ -10,6 +10,7 @@ data/
 .venv/
 __pycache__/
 *.pyc
-
+project_data_output/
 # IntelliJ/Editor Dateien
 .idea/
+flight_data_output/
